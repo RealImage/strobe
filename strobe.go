@@ -82,20 +82,22 @@ func (s *Strobe) waitForClose(l listener) {
 func (s *Strobe) send(l listener, message string) {
     s.lock.Lock()
     defer s.lock.Unlock()
-    t := time.NewTimer(sendTimeout)
 
     if _, ok := s.listeners[l]; ok {
         select {
         case l.channel <- message:
         default:
-            t.Reset(sendTimeout)
+            t := time.NewTimer(sendTimeout)
             select {
-                    case l.channel <- message:
-                    case <-t.C:
-                        log.Printf("send timed out on %v\n", l)
+                case l.channel <- message:
+                case <-t.C:
+                    log.Printf("send timed out on %v\n", l)
             }
             if !t.Stop() {
-                <-t.C
+                select {
+                    case <-t.C:
+                    default:
+                }
             }
         }
     }
