@@ -154,8 +154,8 @@ func Example() {
 }
 
 func TestSendTimeout(t *testing.T) {
-	s := NewStrobe()
-	l := listener{channel: make(chan string), closer: make(chan struct{})}
-	s.listeners[l] = struct{}{}
-	s.send(l, "PING")
+    s := NewStrobe()
+    l := listener{channel: make(chan string), closer: make(chan struct{})}
+    s.listeners[l] = struct{}{}
+    s.send(l, "PING")
 }

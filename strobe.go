@@ -87,18 +87,17 @@ func (s *Strobe) send(l listener, message string) {
         select {
         case l.channel <- message:
         default:
-			t := time.NewTimer(sendTimeout)
+            t := time.NewTimer(sendTimeout)
             select {
-                    case l.channel <- message:
-                    case <-t.C:
-                        log.Printf("send timed out on %v\n", l)
+                case l.channel <- message:
+                case <-t.C:
+                    log.Printf("send timed out on %v\n", l)
             }
-
             if !t.Stop() {
                 select {
-				case <-t.C:
-				default:
-				}
+                    case <-t.C:
+                    default:
+                }
             }
         }
     }
